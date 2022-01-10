@@ -14,9 +14,9 @@
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
         @livewireStyles
-
-        <!-- Scripts -->
+        @livewireScripts
         <script src="{{ mix('js/app.js') }}" defer></script>
+
     </head>
     <body class="font-sans antialiased">
         <x-jet-banner />
@@ -41,6 +41,14 @@
 
         @stack('modals')
 
-        @livewireScripts
+        {{-- @auth
+        <script>
+            Echo.private('App.Models.User.' + {{Auth::user()->id}})
+            .notification((notification) => {
+                livewire.emit('notification');
+            });
+        </script>
+        @endauth --}}
+
     </body>
 </html>

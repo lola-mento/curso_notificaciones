@@ -2,10 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\NexmoMessage;
 
 class MessageSent extends Notification implements ShouldQueue
 {
@@ -29,7 +32,7 @@ class MessageSent extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail','database','broadcast','nexmo'];
     }
 
     /**
@@ -51,10 +54,23 @@ class MessageSent extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toDatabase($notifiable)
     {
+        $notifiable->notification += 1;
+        $notifiable->save();
         return [
-            //
+            'url' => route('messages.show',$this->message->id),
+            'message' => 'Has recibido un mensaje de: '. User::find($this->message->from_user_id)->name,
         ];
+    }
+
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([]);
+    }
+    public function toNexmo($notifiable)
+    {
+        return (new NexmoMessage)
+        ->content("Has recibido un mensaje de " . User::find($this->message->from_user_id)->name);
     }
 }

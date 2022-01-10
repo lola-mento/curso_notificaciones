@@ -58,4 +58,10 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    //Acesor
+    public function routeNotificationForNexmo($notification)
+    {
+        return '573207206355';
+    }
 }
